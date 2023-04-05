@@ -42,7 +42,7 @@ jobs:
         id: brcmeta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: ${{ env.REGISTRY }}/${{ github.GITHUB_REPOSITORY }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push BedrockConnect Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
@@ -52,13 +52,13 @@ jobs:
           push: true
           tags: ${{ steps.brcmeta.outputs.tags }}
           labels: ${{ steps.brcmeta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ github.GITHUB_REPOSITORY }}:latest
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-to: type=inline
       - name: get bind9 meta
         id: bind9meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: ${{ env.REGISTRY }}/${{ github.GITHUB_REPOSITORY }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           flavor: |
             suffix=-bind9
             latest=false
@@ -70,5 +70,5 @@ jobs:
           push: true
           tags: ${{ steps.bind9meta.outputs.tags }}
           labels: ${{ steps.bind9meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ github.GITHUB_REPOSITORY }}:latest
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-to: type=inline
