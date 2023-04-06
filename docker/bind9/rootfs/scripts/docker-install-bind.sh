@@ -47,10 +47,11 @@ ns	300	IN	A	$NSIP" > $NAMED_DBS/db.$domain
   done
 
   # Add zone config to named
-  echo "zone \"$domain\" IN {
-	type master;
-	file \"db.$domain\";
-	allow-query { any; };
+  echo "
+  zone \"$domain\" IN {
+    type master;
+	  file \"db.$domain\";
+	  allow-query { any; };
 };
 " >> $NAMED_ZONES
 }
@@ -66,6 +67,7 @@ ns	300	IN	A	$NSIP" > $NAMED_DBS/db.$domain
 # Configure
 # ensure that listen on all interfaces and add the option if not present or commented out
 if ! grep -q "listen-on-v6" $NAMED_OPTIONS; then
+  echo "adding listen on v6"
   echo "listen-on-v6 { any; };" >> $NAMED_OPTIONS
 fi
 if ! grep -q "listen-on" $NAMED_OPTIONS; then
