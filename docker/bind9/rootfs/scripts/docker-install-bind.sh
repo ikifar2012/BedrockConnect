@@ -64,58 +64,24 @@ fi
 
 # Check OS
 
-if [[ -f /etc/os-release ]]; then
   source /etc/os-release
   if [[ "$ID" == "ubuntu" || "$ID_LIKE" == "ubuntu" ]]; then
-    PKG_MGR=apt
-    PKG_MGR_SYNTAX="install"
-    PKGS="bind9 dnsutils"
     NAMED_OPTIONS="/etc/bind/named.conf.options"
     NAMED_ZONES="/etc/bind/named.conf.local"
     NAMED_DBS="/var/cache/bind"
-    SERVICE_NAME="bind9"
-  elif [[ "$ID" == "centos" ]]; then
-    PKG_MGR=yum
-    PKG_MGR_SYNTAX="install"
-    PKGS="bind bind-utils"
-    NAMED_OPTIONS="/etc/named.conf"
-    NAMED_ZONES="/etc/named.conf"
-    NAMED_DBS="/var/named"
-    SERVICE_NAME="named"
-  elif [[ "$ID" == "arch" ]]; then
-    PKG_MGR=pacman
-    PKG_MGR_SYNTAX="-S"
-    PKGS="bind"
-    NAMED_OPTIONS="/etc/named.conf"
-    NAMED_ZONES="/etc/named.conf"
-    NAMED_DBS="/var/named"
-    SERVICE_NAME="named"
-  elif [[ "$ID" == "debian" || "$ID_LIKE" == "debian" ]]; then
-    PKG_MGR=apt
-    PKG_MGR_SYNTAX="install"
-    PKGS="bind9 dnsutils"
-    NAMED_OPTIONS="/etc/bind/named.conf.options"
-    NAMED_ZONES="/etc/bind/named.conf.local"
-    NAMED_DBS="/var/cache/bind"
-    SERVICE_NAME="named"
-  else
-    echo "Unsupported OS"
-    exit 2
-  fi
-else
-  echo "Unsupported OS"
-  exit 2
 fi
 
 # Install
-
-$PKG_MGR $PKG_MGR_SYNTAX -y $PKGS
-
 # Configure
 
 sed -i '/recursion/d' $NAMED_OPTIONS
 sed -i '/additional-from-cache/d' $NAMED_OPTIONS
 sed -i 's/^options {/options {\n\trecursion no;/' $NAMED_OPTIONS
+# set upstream DNS servers
+sed -i 's/^options {/options {\n\tforwarders {
+\t\t1.1.1.1;
+\t\t1.0.0.1;
+\t};/' $NAMED_OPTIONS
 
 add_domain hivebedrock.network @ geo
 add_domain mineplex.com mco
@@ -126,4 +92,4 @@ add_domain galaxite.net play
 add_domain pixelparadise.gg play
 
 # Reload config
-/etc/init.d/named start
+/usr/sbin/named -g -c ${NAMED_OPTIONS} -u bind
