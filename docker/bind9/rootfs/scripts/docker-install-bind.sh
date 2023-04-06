@@ -55,21 +55,10 @@ ns	300	IN	A	$NSIP" > $NAMED_DBS/db.$domain
 
 #
 # Main
-#
 
-if [[ "$(whoami)" != "root" ]]; then
-  echo "Error: This script need to be ran as root (or using sudo)."
-  exit 1
-fi
-
-# Check OS
-
-  source /etc/os-release
-  if [[ "$ID" == "ubuntu" || "$ID_LIKE" == "ubuntu" ]]; then
     NAMED_OPTIONS="/etc/bind/named.conf.options"
     NAMED_ZONES="/etc/bind/named.conf.local"
     NAMED_DBS="/var/cache/bind"
-fi
 
 # Install
 # Configure
