@@ -30,6 +30,7 @@ function add_domain() {
     echo "Warning: Domain $domain already exists, skipping..."
     return
   fi
+  echo "Adding domain $domain..."
 
   # Create zone file
   echo "@	IN	SOA	$domain.	admin.$domain. (
@@ -63,15 +64,22 @@ ns	300	IN	A	$NSIP" > $NAMED_DBS/db.$domain
 
 # Install
 # Configure
+# ensure that listen on all interfaces and add the option if not present or commented out
+if ! grep -q "listen-on-v6" $NAMED_OPTIONS; then
+  echo "listen-on-v6 { any; };" >> $NAMED_OPTIONS
+fi
+if ! grep -q "listen-on" $NAMED_OPTIONS; then
+  echo "listen-on { any; };" >> $NAMED_OPTIONS
+fi
+# add forwarders if not present or commented out
+if ! grep -q "forwarders" $NAMED_OPTIONS; then
+  echo "forwarders {
+    1.1.1.1;
+    1.0.0.1;
+};" >> $NAMED_OPTIONS
+fi
 
-sed -i '/recursion/d' $NAMED_OPTIONS
-sed -i '/additional-from-cache/d' $NAMED_OPTIONS
-sed -i 's/^options {/options {\n\trecursion no;/' $NAMED_OPTIONS
-# set upstream DNS servers
-sed -i 's/^options {/options {\n\tforwarders {
-\t\t1.1.1.1;
-\t\t1.0.0.1;
-\t};/' $NAMED_OPTIONS
+
 
 add_domain hivebedrock.network @ geo
 add_domain mineplex.com mco
