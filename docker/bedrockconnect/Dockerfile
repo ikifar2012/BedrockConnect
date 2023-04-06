@@ -4,5 +4,6 @@ ADD https://github.com/Pugmatt/BedrockConnect/releases/latest/download/BedrockCo
 WORKDIR /docker/brc
 EXPOSE 19132/udp
 COPY entrypoint.sh /docker/brc
+RUN chmod +x /docker/brc/entrypoint.sh
 
 ENTRYPOINT [ "/bin/bash", "entrypoint.sh"]
