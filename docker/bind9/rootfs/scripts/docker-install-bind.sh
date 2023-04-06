@@ -15,7 +15,8 @@
 
 BCIP=${1:-104.238.130.180}
 NSIP=${2:-$BCIP}
-
+echo "Using Bedrock Connect IP: $BCIP"
+echo "Using Name Server IP: $NSIP"
 #
 # Functions
 #
