@@ -1,9 +1,12 @@
 version: "3"
 services:
   bedrockconnect:
-    build: ./bedrockconnect
+    image: bedrockconnect/bedrockconnect:latest
+    restart: always
     ports:
       - "19132:19132/udp"
+    environment:
+      nodb: "true"
   bind9:
     build: 
       context: ./bind9
