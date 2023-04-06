@@ -47,7 +47,7 @@ jobs:
       - name: Build and push BedrockConnect Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: .
+          context: ./docker/bedrockconnect
           file: docker/bedrockconnect/Dockerfile
           push: true
           tags: ${{ steps.brcmeta.outputs.tags }}
@@ -62,7 +62,7 @@ jobs:
       - name: Build and publish bind9 Docker image
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./docker/bind9
           file: docker/bind9/Dockerfile
           push: true
           tags: ${{ steps.bind9meta.outputs.tags }}
