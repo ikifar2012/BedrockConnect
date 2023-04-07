@@ -1,8 +1,6 @@
 #!/bin/sh
 # add the domains to dnsmasq.conf using the environment variables
 echo "
-listen-address=0.0.0.0
-
 address=/hivebedrock.network/${BCIP}
 address=/geo.hivebedrock.network/${BCIP}
 address=/mco.mineplex.com/${BCIP}
