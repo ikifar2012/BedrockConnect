@@ -20,29 +20,33 @@ echo "Using Name Server IP: $NSIP"
 #
 # Functions
 #
+function generate_serial() {
+  date +%Y%m%d%H
+}
 
 function add_domain() {
   local domain=$1
   shift
 
   # Warn if exists
-  if [[ -n "$(cat $NAMED_ZONES | grep $domain)" ]]; then
+  if [[ -n "$(cat $NAMED_ZONES | grep "$domain")" ]]; then
     echo "Warning: Domain $domain already exists, skipping..."
     return
   fi
   echo "Adding domain $domain..."
-
+  serial=$(generate_serial)
   # Create zone file
-  echo "@	IN	SOA	$domain.	admin.$domain. (
-				2014030801	; serial
-					1D	; refresh
-					1H	; retry
-					1W	; expire
-					3H )	; minimum
+  echo "
+  @	IN	SOA	$domain.	admin.$domain. (
+        $serial ; serial
+          1D  ; refresh
+          1H  ; retry
+          1W  ; expire
+          3H )  ; minimum
 @	300	NS	ns.$domain.
-ns	300	IN	A	$NSIP" > $NAMED_DBS/db.$domain
+ns	300	IN	A	$NSIP" > $NAMED_DBS/db."$domain"
   while [[ -n "$1" ]]; do
-    echo "$1	300	IN	A	$BCIP" >> $NAMED_DBS/db.$domain
+    echo "$1	300	IN	A	$BCIP" >> $NAMED_DBS/db."$domain"
     shift
   done
 
@@ -50,8 +54,8 @@ ns	300	IN	A	$NSIP" > $NAMED_DBS/db.$domain
   echo "
   zone \"$domain\" IN {
     type master;
-	  file \"db.$domain\";
-	  allow-query { any; };
+    file \"db.$domain\";
+    allow-query { any; };
 };
 " >> $NAMED_ZONES
 }
