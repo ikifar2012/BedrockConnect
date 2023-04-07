@@ -1,14 +1,19 @@
 version: "3"
 services:
   bedrockconnect:
-    build: ./bedrockconnect
+    image: docker.io/library/test
+    restart: always
     ports:
-      - "19132:19132/udp"
+      - "19139:19132/udp"
+    environment:
+      nodb: "true"
   bind9:
-    build: 
-      context: ./bind9
-      args: 
-        BCIP: 104.238.130.180
-        NSIP: 104.238.130.180
+    image: docker.io/library/bind
+    restart: always
+    environment:
+      BCIP: 104.238.130.180
     ports: 
-      - "53:53/udp"
+      - "5555:53/udp"
+      - "5555:53/tcp"
+    cap_add:
+      - NET_ADMIN

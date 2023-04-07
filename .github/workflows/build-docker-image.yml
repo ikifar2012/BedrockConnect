@@ -39,33 +39,33 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
-        id: meta
+        id: brcmeta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build and push Docker image
+      - name: Build and push BedrockConnect Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: ./docker/bedrockconnect/dockerfile
+          context: ./docker/bedrockconnect
+          file: docker/bedrockconnect/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.brcmeta.outputs.tags }}
+          labels: ${{ steps.brcmeta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-to: type=inline
-      - name: get bind9 meta
-        id: bind9meta
+      - name: get dnsmasq meta
+        id: dnsmasqmeta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          flavor: |
-            suffix=-bind9
-      - name: Build and publish bind9 Docker image
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-dnsmasq
+      - name: Build and publish dnsmasq Docker image
         uses: docker/build-push-action@v2
         with:
-          context: ./docker/bind9
+          context: ./docker/dnsmasq
+          file: docker/dnsmasq/Dockerfile
           push: true
-          tags: ${{ steps.bind9meta.outputs.tags }}
-          labels: ${{ steps.bind9meta.outputs.labels }}
+          tags: ${{ steps.dnsmasqmeta.outputs.tags }}
+          labels: ${{ steps.dnsmasqmeta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-to: type=inline

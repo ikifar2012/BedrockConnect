@@ -1,0 +1,3 @@
+#!/bin/bash
+bash /scripts/docker-remove-bind.sh
+echo "Running bind remove script"

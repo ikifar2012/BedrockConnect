@@ -1,0 +1,5 @@
+#!/bin/bash
+# run the bind install script
+echo "Running bind install script"
+eval /scripts/docker-install-bind.sh "${BCIP}" "${NSIP}"
+
