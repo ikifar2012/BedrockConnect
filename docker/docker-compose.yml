@@ -12,6 +12,8 @@ services:
     restart: always
     environment:
       BCIP: 104.238.130.180
-      NSIP: 104.238.130.180
     ports: 
-      - "59:53/udp"
+      - "5555:53/udp"
+      - "5555:53/tcp"
+    cap_add:
+      - NET_ADMIN

@@ -70,21 +70,36 @@ ns	300	IN	A	$NSIP" > $NAMED_DBS/db."$domain"
 # Install
 # Configure
 # ensure that listen on all interfaces and add the option if not present or commented out
-if ! grep -q "listen-on-v6" $NAMED_OPTIONS; then
-  echo "adding listen on v6"
-  echo "listen-on-v6 { any; };" >> $NAMED_OPTIONS
+# Check if listen-on option exists in named.conf file
+if grep -q "^listen-on" $NAMED_OPTIONS; then
+    # Check if listen-on option is commented out
+    if grep -q "^#listen-on" $NAMED_OPTIONS; then
+        # Uncomment listen-on option
+        sed -i 's/^#listen-on/listen-on/' $NAMED_OPTIONS
+    fi
+else
+    # Add listen-on option to named.conf file
+    echo "listen-on { any; };" >> $NAMED_OPTIONS
 fi
-if ! grep -q "listen-on" $NAMED_OPTIONS; then
-  echo "listen-on { any; };" >> $NAMED_OPTIONS
+
+# Remove listen-on-v6 option from named.conf file if it exists
+sed -i '/^listen-on-v6/d' $NAMED_OPTIONS
+
+# Add listen-on option to named.conf file if it doesn't exist
+if ! grep -q "^listen-on" $NAMED_OPTIONS; then
+    echo "listen-on { any; };" >> $NAMED_OPTIONS
 fi
 # add forwarders if not present or commented out
-if ! grep -q "forwarders" $NAMED_OPTIONS; then
+if ! grep -q "^forwarders" $NAMED_OPTIONS; then
   echo "forwarders {
     1.1.1.1;
     1.0.0.1;
 };" >> $NAMED_OPTIONS
+else
+  if grep -q "^#forwarders" $NAMED_OPTIONS; then
+    sed -i 's/^#forwarders/forwarders/' $NAMED_OPTIONS
+  fi
 fi
-
 
 
 add_domain hivebedrock.network @ geo
@@ -97,3 +112,11 @@ add_domain pixelparadise.gg play
 
 # Reload config
 /usr/sbin/named -g -c ${NAMED_OPTIONS} -u bind
+hivebedrock.network 
+geo.hivebedrock.network
+mco.mineplex.com
+play.inpvp.net
+mco.lbsg.net
+mco.cubecraft.net
+play.galaxite.net
+play.pixelparadise.gg
